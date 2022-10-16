@@ -1,3 +1,4 @@
+#load associated packages
 import math
 from enum import Enum
 import networkx as nx
@@ -7,7 +8,7 @@ from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 from mesa.space import NetworkGrid
 
-
+#declare agent attributes
 class State(Enum):
     VULNERABLE = 0
     HARDENED = 0
@@ -30,7 +31,7 @@ def number_vulnerable(model):
 def number_resilient(model):
     return number_state(model, State.RESILIENT)
 
-
+#Initialize class model
 class SocialInfluenceModel(Model):
     """A social influence model with some number of agents"""
 
@@ -45,6 +46,7 @@ class SocialInfluenceModel(Model):
     ):
 
         ### EXPLICIT NETWORK STRUCTURE ###
+        ### opportunity for adjustable networks with # of nodes, edges, and weights ###
         net = nx.Graph()
         edges = [(0,1),(1,2),(2, 3),(2,4),(3,5),(3,6),(3,7),(3,8),(3,9),
             (5,6),(6,7),(7,8),(8,9),(4,10),(4,11),(4,12),(4,13),(4,14),
@@ -123,7 +125,7 @@ class SocialInfluenceModel(Model):
         for i in range(n):
             self.step()
 
-
+#Create influencer to persuade network
 class InfluenceAgent(Agent):
     def __init__(
         self,
