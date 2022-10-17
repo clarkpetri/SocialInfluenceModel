@@ -6,7 +6,7 @@
 ## Supplemental Information
 ---
 ### Included Python Files
-- run.py: execute this file from the terminal to launch the model (ensure model.py and server.py are in a folder titled 'SocialInfluenceModel')
+- run.py: execute this file from the terminal to launch the model (ensure model.py and server.py are in a sub-folder titled 'SocialInfluenceModel')
 - model.py: the model class, various agent classes, and requisite functions
 - server.py: the MESA visualization suite to produce a browser-based GUI
 
