@@ -1,4 +1,3 @@
-#load associated packages
 import math
 from enum import Enum
 import networkx as nx
@@ -8,7 +7,7 @@ from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 from mesa.space import NetworkGrid
 
-#declare agent attributes
+
 class State(Enum):
     VULNERABLE = 0
     HARDENED = 0
@@ -31,7 +30,7 @@ def number_vulnerable(model):
 def number_resilient(model):
     return number_state(model, State.RESILIENT)
 
-#Initialize class model
+
 class SocialInfluenceModel(Model):
     """A social influence model with some number of agents"""
 
@@ -45,27 +44,30 @@ class SocialInfluenceModel(Model):
         gain_hardened_chance=0.5,
     ):
 
-        ### EXPLICIT NETWORK STRUCTURE ###
-        ### opportunity for adjustable networks with # of nodes, edges, and weights ###
-        net = nx.Graph()
-        edges = [(0,1),(1,2),(2, 3),(2,4),(3,5),(3,6),(3,7),(3,8),(3,9),
-            (5,6),(6,7),(7,8),(8,9),(4,10),(4,11),(4,12),(4,13),(4,14),
-            (10,11),(11,12),(12,13),(13,14),('MAH NODE',0)]
-        net.add_edges_from(edges)
+        
+        ### epinions network ###
+        epinions = nx.read_weighted_edgelist('/Users/clarkpetri/Documents/GMU/CSS 600/Class Project/epinions_small.csv', delimiter=',')
 
-        #self.num_nodes = num_nodes
+        # Get largest connected component
+        n = max(nx.connected_components(epinions), key=len)
+        connected_g = nx.subgraph(epinions, n)
+        numEdges = connected_g.number_of_edges()
+        numNodes = connected_g.number_of_nodes()
+
+        # Get list of highest degree nodes
+        node_degree_list = sorted(connected_g.degree, key=lambda x: x[1], reverse=True)
+        temp = node_degree_list[0:10]
+        top_ten = []
+        for n in temp:
+            top_ten.append(n[0])
+
         prob = 1
 
-        self.G = net 
-
-        #print(self.G.nodes, self.G.edges)
+        self.G = connected_g # test_net
 
         self.grid = NetworkGrid(self.G)
         self.schedule = RandomActivation(self)
-        self.number_influencers = 1
-        #self.initial_outbreak_size = (
-        #    initial_outbreak_size if initial_outbreak_size <= num_nodes else num_nodes
-        #)
+        self.number_influencers = (number_influencers if number_influencers <= len(top_ten) else len(top_ten))
         self.influence_chance = influence_chance
         self.influence_check_frequency = influence_check_frequency
         self.reintegration_probability = reintegration_probability
@@ -101,7 +103,7 @@ class SocialInfluenceModel(Model):
         ### PLACE INFLUENCER ###
         ### AT PRESENT, THIS IS RANDOM ###
         ### We can explicitly place it later ###
-        influencer_start = self.random.sample(self.G.nodes(), self.number_influencers)
+        influencer_start = self.random.sample(top_ten, self.number_influencers)
         for a in self.grid.get_cell_list_contents(influencer_start):
             a.state = State.INFLUENCED
 
@@ -125,7 +127,7 @@ class SocialInfluenceModel(Model):
         for i in range(n):
             self.step()
 
-#Create influencer to persuade network
+
 class InfluenceAgent(Agent):
     def __init__(
         self,
@@ -194,10 +196,10 @@ class InfluenceAgent(Agent):
 
 
     def step(self):
-        if self.state == State.RESILIENT:
-            print("I'M RESILIENT")
-        if self.state == State.HARDENED:
-            print("I'M HARDENED")
+        #if self.state == State.RESILIENT:
+            #print("I'M RESILIENT")
+        #if self.state == State.HARDENED:
+            #print("I'M HARDENED")
         if self.state is State.INFLUENCED:
             self.try_to_influence()
         self.try_check_situation()
