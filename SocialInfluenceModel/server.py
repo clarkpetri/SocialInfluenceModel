@@ -1,6 +1,5 @@
 import math
 
-#browser visualization features for mesa
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.modules import ChartModule
@@ -82,7 +81,7 @@ def network_portrayal(G):
     return portrayal
 
 
-network = NetworkModule(network_portrayal, 500, 500)#, library="d3")
+network = NetworkModule(network_portrayal, 1500, 1500)#, library="d3")
 chart = ChartModule(
     [
         {"Label": "Influenced", "Color": "#FF0000"},
@@ -113,6 +112,15 @@ model_params = {
         1.0,
         0.1,
         description="Probability that vulnerable neighbor will be influenced",
+    ),
+    "number_influencers": UserSettableParameter(
+        "slider",
+        "Number of Influencers",
+        1,
+        1,
+        10,
+        1,
+        description="Number of Influencers",
     ),
     "influence_check_frequency": UserSettableParameter(
         "slider",
@@ -152,9 +160,6 @@ model_params = {
         description="Probability that an agent will harden and remain permanently influenced",
     ),
 }
-
-### Assuming we can add monitors in the server.py file, is this where we would add histograms or line graphs
-### for the network measurements, or would that need to be added to the model.py file? 
 
 server = ModularServer(
     SocialInfluenceModel, [network, MyTextElement(), chart], "Social Influence Model", model_params
