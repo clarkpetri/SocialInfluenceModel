@@ -6,9 +6,10 @@
 ## Supplemental Information
 ---
 ### Included Python Files
-- run.py: execute this file from the terminal to launch the model (ensure model.py and server.py are in a sub-folder titled 'SocialInfluenceModel')
+- run.py: execute this file from the terminal to launch the model
 - model.py: the model class, various agent classes, and requisite functions
 - server.py: the MESA visualization suite to produce a browser-based GUI
+- batch.py: Script for batch runs and parameter sweeps of the model
 
 ### Known Issues
 - All agents that aren't the influencer start hardened
